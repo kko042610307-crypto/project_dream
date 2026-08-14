@@ -6,7 +6,7 @@ from openai import OpenAI
 # ==============================================================================
 # 1. API 키 설정 (코드 내부 고정)
 # ==============================================================================
-UPSTAGE_API_KEY = "up_Y7OKHBUB2q7pi7C4E1ILIWItBAUOG"  # 발급받으신 Upstage API Key를 입력하세요.
+UPSTAGE_API_KEY = "up_Y7OKHBUB2q7pi7C4E1ILIWItBAUOG"  # 실제 발급받으신 Upstage API Key를 입력하세요.
 
 client = OpenAI(
     api_key=UPSTAGE_API_KEY,
@@ -17,12 +17,12 @@ client = OpenAI(
 # 2. Page Config
 # ==============================================================================
 st.set_page_config(
-    page_title="주제 맞춤형 무지 학습 틀 생성기",
+    page_title="주제 맞춤형 학습 템플릿 생성기",
     page_icon="📝",
     layout="wide"
 )
 
-st.title("📝 주제 맞춤형 무지 학습 템플릿 생성기")
+st.title("📝 주제 맞춤형 학습 템플릿 생성기")
 
 st.divider()
 
@@ -58,13 +58,13 @@ with col_input:
     class_notes = st.text_area(
         "✍️ 학습할 주제 및 서식 요구사항",
         height=280,
-        placeholder="예시 1:\n생명과학 3역 6계 분류 체계 (3역과 6계를 나누어 정리할 수 있는 공백 마인드맵이나 분류 표 틀만 만들어줘.)\n\n예시 2:\n사회문화 사회를 바라보는 관점 (기능론, 갈등론, 상징적 상호작용론을 비교할 수 있는 항목별 완전 공백 비교 표를 만들어줘.)"
+        placeholder="예시:\n인공지능, 머신러닝, 딥러닝 개념 계층 구조 및 학습 유형(지도/비지도/강화학습) 비교 정리 표를 만들어주고, 과적합 해결 방안과 K-Means 단계별 정리 상자 틀을 만들어줘."
     )
     
-    submit_btn = st.button("🚀 무지 학습 템플릿 생성하기", use_container_width=True)
+    submit_btn = st.button("🚀 장 단위 학습 템플릿 생성하기", use_container_width=True)
 
 with col_output:
-    st.subheader("🖼️ 생성된 템플릿 미리보기")
+    st.subheader("🖼️ 템플릿 미리보기 (장 단위 넘기기)")
     
     if submit_btn:
         if not class_notes.strip():
@@ -72,41 +72,118 @@ with col_output:
         elif UPSTAGE_API_KEY == "YOUR_UPSTAGE_API_KEY_HERE":
             st.error("코드 상단의 UPSTAGE_API_KEY 변수에 실제 Upstage API 키를 입력해 주세요.")
         else:
-            with st.spinner("학습 주제에 최적화된 무지 서식 틀을 디자인 중입니다..."):
+            with st.spinner("완벽한 HTML 문법 규격에 맞춰 장 단위 템플릿을 생성 중입니다..."):
                 try:
-                    # 안전한 문자열 템플릿 (.format 활용)
+                    # 완벽한 HTML 문법과 넘기기(Pagination) JS 스크립트 강제 프롬프트
                     prompt_template = """
 [사용자 입력 정보]
-1. 선호 템플릿 양식: {template_type}
+1. 템플릿 양식: {template_type}
 2. 노트 규격: {note_size}
 3. 학습 주제 및 요구사항:
 {class_notes}
 
-[템플릿 제작 절대 규칙 (100% 무지 서식)]
-1. **본문 내부 공간은 100% 완전히 비어있는 무지(공백) 상태여야 합니다.**
-2. AI가 임의로 작성한 요약글, 해설, 키워드, 빈칸 문제(`_____`) 등을 본문 상자나 표 셀 안에 절대 집어넣지 마세요.
-3. 입력된 주제를 바탕으로 **'틀(Structure)'**만 생성하세요:
-   - 비교 주제: 행/열 헤더(예: 구분, 기능론, 갈등론 등)만 작성하고 내용 셀은 깨끗한 빈칸/공백 표로 생성
-   - 분류/위계 주제: 상위 구조 타이틀만 표시하고, 세부 분류 공간은 비어있는 테두리 박스/마인드맵 형태로 생성
-   - 과정/순서 주제: 단계 제목만 표시하고 세부 필기 공간은 비어있는 연결 상자로 생성
-4. 사용자가 직접 손필기하거나 타이핑하며 모든 내용을 처음부터 채울 수 있도록 넉넉한 공백을 확보하세요.
+[HTML 문법 및 품질 준수 절대 규칙 (오류 엄금)]
+1. 문법적으로 100% 유효한 W3C 표준 HTML5 문서를 생성하세요.
+2. 태그가 훼손되거나 잘못 결합된 형태 (예: `<div> class=...`, `<th> style=...`, `<tr><tr>`, `<td>>내용`)를 절대 작성하지 마세요. 모든 태그는 `<div class="...">`, `<td class="...">` 형태로 정확해야 합니다.
+3. 모든 표(table), <tr>, <td>, <div> 태그는 짝이 맞게 정상적으로 닫혀야 합니다.
+4. 본문 내용 상자 안은 사용자가 필기할 수 있도록 빈 공백이나 비어있는 셀만 배치하세요.
 
-[페이지 레이아웃 및 CSS 규칙]
-- 선택된 규격({note_size})의 실제 치수에 정확히 맞춰 작성하세요:
-  * A4: width: 210mm; min-height: 297mm;
-  * B5: width: 176mm; min-height: 250mm;
-  * Letter: width: 215.9mm; min-height: 279.4mm;
-  * iPad: width: 100%; aspect-ratio: 16/9; max-width: 1024px;
-- 내용이 길어 2장 이상 필요 시, 반드시 개별 <div class="page">...</div> 태그로 분할하세요.
-- CSS 가이드:
-  body는 flex column, align-items center, background #f0f0f0로 설정하고,
-  .page는 background white, box-shadow, padding 15mm, break-after: page로 지정하세요.
-  표 셀, 마인드맵 박스, 필기 구역 테두리는 은은한 색상(#cbd5e1 등)으로 깔끔하게 디테일을 더하세요.
+[장 단위 넘기기(Page Pagination) 필수 구조]
+반드시 아래의 자바스크립트 슬라이드 넘기기 레이아웃 구조와 CSS를 그대로 포함하여 완성하세요:
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body {{ margin: 0; background-color: #e2e8f0; font-family: 'Noto Sans KR', sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }}
+  
+  /* 상단 페이지 이동 네비게이션 바 */
+  .nav-bar {{ position: sticky; top: 0; z-index: 1000; width: 100%; background: #1e293b; color: white; padding: 12px 0; display: flex; justify-content: center; align-items: center; gap: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }}
+  .nav-btn {{ background: #3b82f6; color: white; border: none; padding: 8px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s; }}
+  .nav-btn:disabled {{ background: #64748b; cursor: not-allowed; opacity: 0.6; }}
+  .page-num {{ font-size: 15px; font-weight: bold; color: #f8fafc; }}
+  
+  .page-wrapper {{ padding: 20px 0; display: flex; justify-content: center; width: 100%; }}
+  
+  /* 장 단위 페이지 */
+  .page {{ display: none; background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.15); box-sizing: border-box; padding: 18mm; border-radius: 4px; }}
+  .page.active {{ display: block; }}
+  
+  /* 규격 설정 */
+  /* A4인 경우: width: 210mm; min-height: 297mm; */
+  /* B5인 경우: width: 176mm; min-height: 250mm; */
+  /* Letter인 경우: width: 215.9mm; min-height: 279.4mm; */
+  /* iPad인 경우: width: 900px; aspect-ratio: 16/9; */
+  
+  /* 요소 스타일 */
+  .section-title {{ font-size: 18px; font-weight: bold; color: #1e293b; border-bottom: 2px solid #3b82f6; padding-bottom: 6px; margin: 20px 0 12px 0; }}
+  table {{ width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; }}
+  th, td {{ border: 1px solid #cbd5e1; padding: 10px; text-align: left; vertical-align: top; word-break: break-all; }}
+  th {{ background-color: #f1f5f9; font-weight: bold; color: #334155; text-align: center; }}
+  .blank-box {{ border: 1px dashed #94a3b8; border-radius: 6px; min-height: 50px; background-color: #fafafa; margin-bottom: 12px; }}
+  .sub-title {{ font-weight: bold; color: #475569; margin: 10px 0 6px 0; }}
+</style>
+</head>
+<body>
+
+<div class="nav-bar">
+  <button class="nav-btn" id="prevBtn" onclick="prevPage()">◀ 이전 페이지</button>
+  <span class="page-num" id="pageIndicator">1 / 1</span>
+  <button class="nav-btn" id="nextBtn" onclick="nextPage()">다음 페이지 ▶</button>
+</div>
+
+<div class="page-wrapper">
+  <!-- 내용이 넘치거나 주제가 구분되면 <div class="page">를 여러 개 작성하세요 -->
+  <div class="page active">
+     <!-- 1페이지 내용 -->
+  </div>
+  <div class="page">
+     <!-- 2페이지 내용 (필요 시) -->
+  </div>
+</div>
+
+<script>
+  let currentPage = 0;
+  const pages = document.querySelectorAll('.page');
+  const pageIndicator = document.getElementById('pageIndicator');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function updatePage() {{
+    pages.forEach((p, idx) => {{
+      p.classList.toggle('active', idx === currentPage);
+    }});
+    pageIndicator.textContent = (currentPage + 1) + ' / ' + pages.length;
+    prevBtn.disabled = (currentPage === 0);
+    nextBtn.disabled = (currentPage === pages.length - 1);
+  }}
+
+  function prevPage() {{
+    if (currentPage > 0) {{
+      currentPage--;
+      updatePage();
+      window.scrollTo(0, 0);
+    }}
+  }}
+
+  function nextPage() {{
+    if (currentPage < pages.length - 1) {{
+      currentPage++;
+      updatePage();
+      window.scrollTo(0, 0);
+    }}
+  }}
+
+  updatePage();
+</script>
+</body>
+</html>
 
 [응답 형식]
-반드시 유효한 JSON 형식으로만 응답하세요. 마크다운 코드 블록이나 기타 텍스트는 절대 포함하지 마세요.
+반드시 유효한 JSON 형식으로만 응답하세요. 마크다운 코드 블록이나 부연 설명은 절대 포함하지 마세요.
 
-"html_code": "<!DOCTYPE html><html><head><style>...</style></head><body>...</body></html>"
+"html_code": "<!DOCTYPE html><html>...</html>"
 """
 
                     prompt = prompt_template.format(
@@ -121,17 +198,17 @@ with col_output:
                         messages=[
                             {
                                 "role": "system",
-                                "content": "You are an expert educational template designer. You create clean, elegant HTML/CSS blank worksheets (completely empty content boxes/tables) tailored to study topics. Always return valid JSON with only the 'html_code' field."
+                                "content": "You are a world-class front-end developer and educational worksheet UI/UX designer. You produce strictly valid HTML5 with Javascript page pagination for multi-page document navigation. Always output valid JSON only."
                             },
                             {
                                 "role": "user",
                                 "content": prompt
                             }
                         ],
-                        temperature=0.2
+                        temperature=0.1
                     )
 
-                    # JSON 파싱 및 파싱 오류 예외 처리
+                    # JSON 파싱 및 예외 처리
                     raw_response = response.choices[0].message.content.strip()
                     if raw_response.startswith("```json"):
                         raw_response = raw_response[7:]
@@ -143,14 +220,14 @@ with col_output:
                     data = json.loads(raw_response.strip())
                     html_code = data.get("html_code", "")
 
-                    # 1. 시각적 미리보기 (장 단위 구분)
-                    components.html(html_code, height=800, scrolling=True)
+                    # 1. 시각적 미리보기 (스크롤 없이 넘기기 뷰어)
+                    components.html(html_code, height=920, scrolling=False)
 
                     # 2. 다운로드 버튼
                     st.download_button(
                         label="💾 무지 템플릿 다운로드 (HTML)",
                         data=html_code,
-                        file_name="blank_study_template.html",
+                        file_name="page_study_template.html",
                         mime="text/html",
                         use_container_width=True
                     )
