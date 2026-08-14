@@ -17,32 +17,31 @@ client = OpenAI(
 # 2. Page Config
 # ==============================================================================
 st.set_page_config(
-    page_title="주제 맞춤형 학습 템플릿 생성기",
-    page_icon="🧠",
+    page_title="주제 맞춤형 무지 학습 틀 생성기",
+    page_icon="📝",
     layout="wide"
 )
 
-st.title("🧠 주제 맞춤형 학습 템플릿 생성기")
-st.write("학습할 내용을 입력하면, AI가 내용의 구조(비교·분류·과정 등)를 분석하여 **직접 채워 넣으며 공부할 수 있는 맞춤형 복습 템플릿**을 만들어 드립니다.")
+st.title("📝 주제 맞춤형 무지 학습 템플릿 생성기")
 
 st.divider()
 
 # ==============================================================================
-# 3. 입력 및 결과 화면 레이아웃
+# 3. 입력 및 결과 화면 레이아웃 (2열 구성)
 # ==============================================================================
 col_input, col_output = st.columns([1, 1.2], gap="large")
 
 with col_input:
-    st.subheader("⚙️ 학습 템플릿 설정")
+    st.subheader("⚙️ 템플릿 설정")
     
     template_type = st.selectbox(
-        "📌 템플릿 표현 양식",
+        "📌 템플릿 구조 양식",
         [
-            "🤖 AI 자동 추천 (학습 내용 구조에 맞는 최적의 레이아웃 자동 생성)",
-            "📊 비교/대조 표 양식 (관점, 이론, 개념 간 차이점 한눈에 비교)",
-            "🌳 위계/분류 구조 양식 (3역 6계, 분류 체계, 마인드맵형 다이어그램)",
-            "🔄 과정/순서 흐름도 양식 (시대순, 실험 절차, 인과관계 단계별 정리)",
-            "📌 코넬 & 개념 인출 양식 (핵심 용어 정의 및 빈칸 채우기 중심)"
+            "🤖 AI 자동 구조화 (학습 주제에 맞는 최적의 무지 틀 자동 생성)",
+            "📊 무지 비교 표 (관점·이론·개념 비교용 공백 표)",
+            "🌳 무지 위계/분류 박스 (3역 6계, 분류 체계용 빈 마인드맵/상자)",
+            "🔄 무지 과정/흐름도 (순서, 실험 절차용 공백 화살표 상자)",
+            "📌 무지 코넬/구획 서식 (주제별 섹션 및 하단 공백 요약란)"
         ]
     )
     
@@ -57,58 +56,59 @@ with col_input:
     )
     
     class_notes = st.text_area(
-        "✍️ 학습할 내용 / 수업 요약",
+        "✍️ 학습할 주제 및 서식 요구사항",
         height=280,
-        placeholder="예시 1:\n생명과학 시간 생물 분류 체계 (3역 6계: 세균역, 고세균역, 진핵생물역과 6개 계의 특징을 분류하여 정리할 수 있는 표나 마인드맵 서식을 만들어줘.)\n\n예시 2:\n사회문화 - 사회를 바라보는 관점 (기능론, 갈등론, 상징적 상호작용론의 핵심 개념, 사회관, 한계점을 한눈에 비교해서 적을 수 있는 표 양식을 만들어줘.)"
+        placeholder="예시 1:\n생명과학 3역 6계 분류 체계 (3역과 6계를 나누어 정리할 수 있는 공백 마인드맵이나 분류 표 틀만 만들어줘.)\n\n예시 2:\n사회문화 사회를 바라보는 관점 (기능론, 갈등론, 상징적 상호작용론을 비교할 수 있는 항목별 완전 공백 비교 표를 만들어줘.)"
     )
     
-    submit_btn = st.button("🚀 맞춤형 학습 템플릿 생성하기", use_container_width=True)
+    submit_btn = st.button("🚀 무지 학습 템플릿 생성하기", use_container_width=True)
 
 with col_output:
-    st.subheader("🖼️ 생성된 학습 템플릿 미리보기")
+    st.subheader("🖼️ 생성된 템플릿 미리보기")
     
     if submit_btn:
         if not class_notes.strip():
-            st.warning("학습할 내용을 입력해 주세요.")
+            st.warning("학습 주제를 입력해 주세요.")
         elif UPSTAGE_API_KEY == "YOUR_UPSTAGE_API_KEY_HERE":
             st.error("코드 상단의 UPSTAGE_API_KEY 변수에 실제 Upstage API 키를 입력해 주세요.")
         else:
-            with st.spinner("AI가 학습 내용의 구조를 분석하여 최적의 복습 서식을 디자인 중입니다..."):
+            with st.spinner("학습 주제에 최적화된 무지 서식 틀을 디자인 중입니다..."):
                 try:
-                    # f-string 중괄호 충돌을 방지하기 위한 안전한 문자열 템플릿
+                    # 안전한 문자열 템플릿 (.format 활용)
                     prompt_template = """
 [사용자 입력 정보]
-1. 선호 템플릿 표현 양식: {template_type}
+1. 선호 템플릿 양식: {template_type}
 2. 노트 규격: {note_size}
-3. 학습할 수업 내용:
+3. 학습 주제 및 요구사항:
 {class_notes}
 
-[템플릿 제작 핵심 규칙 (필수 준수)]
-1. 완성된 정답 요약본을 작성하지 마세요.
-2. 입력된 학습 내용의 구조적 특성을 분석하여 맞춤형 서식을 만드세요:
-   - 비교/대조 개념인 경우: 비교 기준(개념, 특징, 장단점 등)이 들어간 '비교 표(Table)' 형태로 틀을 만들고, 내부 셀은 작성할 수 있도록 비워두거나 힌트/빈칸 [       ]을 배치하세요.
-   - 분류/위계 체계인 경우 (예: 3역 6계 등): 마인드맵 스타일의 계통도, 트리 구조 Box, 혹은 단계별 분류 표로 틀을 만드세요.
-   - 과정/순서인 경우: Flowchart 형태의 연결된 박스를 배치하세요.
-3. 학습자가 직접 손필기하거나 타이핑하며 채워갈 수 있도록 충분한 작성 공간(빈 셀, 빈 상자, 밑줄, 점선)을 마련하세요.
+[템플릿 제작 절대 규칙 (100% 무지 서식)]
+1. **본문 내부 공간은 100% 완전히 비어있는 무지(공백) 상태여야 합니다.**
+2. AI가 임의로 작성한 요약글, 해설, 키워드, 빈칸 문제(`_____`) 등을 본문 상자나 표 셀 안에 절대 집어넣지 마세요.
+3. 입력된 주제를 바탕으로 **'틀(Structure)'**만 생성하세요:
+   - 비교 주제: 행/열 헤더(예: 구분, 기능론, 갈등론 등)만 작성하고 내용 셀은 깨끗한 빈칸/공백 표로 생성
+   - 분류/위계 주제: 상위 구조 타이틀만 표시하고, 세부 분류 공간은 비어있는 테두리 박스/마인드맵 형태로 생성
+   - 과정/순서 주제: 단계 제목만 표시하고 세부 필기 공간은 비어있는 연결 상자로 생성
+4. 사용자가 직접 손필기하거나 타이핑하며 모든 내용을 처음부터 채울 수 있도록 넉넉한 공백을 확보하세요.
 
 [페이지 레이아웃 및 CSS 규칙]
-- 선택된 규격({note_size})에 완벽히 맞추어 디자인하세요:
+- 선택된 규격({note_size})의 실제 치수에 정확히 맞춰 작성하세요:
   * A4: width: 210mm; min-height: 297mm;
   * B5: width: 176mm; min-height: 250mm;
   * Letter: width: 215.9mm; min-height: 279.4mm;
   * iPad: width: 100%; aspect-ratio: 16/9; max-width: 1024px;
-- 내용이 길어 2장 이상 필요 시, 반드시 개별 <div class="page">...</div> 태그로 구분하세요.
-- CSS 스타일 가이드:
+- 내용이 길어 2장 이상 필요 시, 반드시 개별 <div class="page">...</div> 태그로 분할하세요.
+- CSS 가이드:
   body는 flex column, align-items center, background #f0f0f0로 설정하고,
   .page는 background white, box-shadow, padding 15mm, break-after: page로 지정하세요.
-  table, .diagram-box 등의 테두리는 은은한 색상(#cbd5e1 등)으로 가독성 좋게 스타일링하세요.
+  표 셀, 마인드맵 박스, 필기 구역 테두리는 은은한 색상(#cbd5e1 등)으로 깔끔하게 디테일을 더하세요.
 
 [응답 형식]
 반드시 유효한 JSON 형식으로만 응답하세요. 마크다운 코드 블록이나 기타 텍스트는 절대 포함하지 마세요.
 
 "html_code": "<!DOCTYPE html><html><head><style>...</style></head><body>...</body></html>"
 """
-                    # 변수 치환
+
                     prompt = prompt_template.format(
                         template_type=template_type,
                         note_size=note_size,
@@ -121,7 +121,7 @@ with col_output:
                         messages=[
                             {
                                 "role": "system",
-                                "content": "You are an expert instructional designer who creates interactive study worksheets and structured HTML/CSS active recall templates based on educational concepts. Always return valid JSON with only the 'html_code' field."
+                                "content": "You are an expert educational template designer. You create clean, elegant HTML/CSS blank worksheets (completely empty content boxes/tables) tailored to study topics. Always return valid JSON with only the 'html_code' field."
                             },
                             {
                                 "role": "user",
@@ -131,7 +131,7 @@ with col_output:
                         temperature=0.2
                     )
 
-                    # JSON 파싱 및 예외 처리
+                    # JSON 파싱 및 파싱 오류 예외 처리
                     raw_response = response.choices[0].message.content.strip()
                     if raw_response.startswith("```json"):
                         raw_response = raw_response[7:]
@@ -143,14 +143,14 @@ with col_output:
                     data = json.loads(raw_response.strip())
                     html_code = data.get("html_code", "")
 
-                    # 1. 시각적 미리보기
+                    # 1. 시각적 미리보기 (장 단위 구분)
                     components.html(html_code, height=800, scrolling=True)
 
                     # 2. 다운로드 버튼
                     st.download_button(
-                        label="💾 학습지 템플릿 다운로드 (HTML)",
+                        label="💾 무지 템플릿 다운로드 (HTML)",
                         data=html_code,
-                        file_name="study_template.html",
+                        file_name="blank_study_template.html",
                         mime="text/html",
                         use_container_width=True
                     )
