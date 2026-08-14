@@ -148,7 +148,7 @@ with col_view:
 
 [본문 100% 무지(공백) 규칙]
 1. <th>, .section-title, .sub-title 외의 본문 공간(<td>, .blank-box) 내부에 문장, 키워드, 예시, 힌트를 절대 넣지 마세요.
-2. 필기용 셀은 <td></td>, 박스는 <div class="blank-box"></div> 형태로 완벽한 공백으로 두세요.
+2. 중요***필기용 셀은 <td></td>, 박스는 <div class="blank-box"></div> 형태로 완벽한 공백으로 두세요.***
 
 [페이지 overflow잘림 방지 규칙]
 1. 한 개 페이지(<div class="page">)에 너무 많은 내용을 몰아넣지 마세요. (A4 높이 초과 방지)
