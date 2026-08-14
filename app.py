@@ -14,7 +14,7 @@ client = OpenAI(
 )
 
 # ==============================================================================
-# 2. Page Config & Custom CSS (사이트 디자인 개선)
+# 2. Page Config & Custom CSS (UI 디자인)
 # ==============================================================================
 st.set_page_config(
     page_title="AI 맞춤형 학습 템플릿 생성기",
@@ -26,7 +26,7 @@ st.set_page_config(
 # Modern UI Styling
 st.markdown("""
 <style>
-    /* 전체 배경 및 폰트 설정 */
+    /* 전체 배경 설정 */
     .main { background-color: #f8fafc; }
     
     /* 히어로 헤더 디자인 */
@@ -40,16 +40,6 @@ st.markdown("""
     }
     .hero-title { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; color: #f8fafc; }
     .hero-subtitle { font-size: 1rem; color: #94a3b8; line-height: 1.5; }
-    
-    /* 카드 컨테이너 */
-    .css-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        margin-bottom: 1rem;
-    }
     
     /* 생성 버튼 스타일링 */
     .stButton > button {
@@ -73,10 +63,10 @@ st.markdown("""
 # 히어로 헤더 출력
 st.markdown("""
 <div class="hero-container">
-    <div class="hero-title">✨ AI 맞춤형 학습 템플릿 생성기</div>
+    <div class="hero-title">✨ AI 맞춤형 100% 무지 학습 템플릿 생성기</div>
     <div class="hero-subtitle">
-        학습 주제를 입력하면 설명이나 힌트 없이 <b>오직 필기에만 집중할 수 있는 perfect-fit 공백 서식</b>을 생성합니다.<br>
-        표 문법 파손 방지 및 A4 장 단위 자동 분할 엔진이 탑재되어 있습니다.
+        개념 설명이나 힌트를 모두 배제하고 <b>오직 사용자가 직접 채워 넣을 수 있는 100% 공백 필기 틀</b>을 만듭니다.<br>
+        표 문법 자동 검증 및 A4 장 단위 자동 분할 기능이 기본 적용되어 있습니다.
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -92,7 +82,11 @@ with col_config:
     template_type = st.selectbox(
         "📌 템플릿 구조 유형",
         [
-            "🤖 AI 자동 구조화 (주제에 맞는 최적 서식)"
+            "🤖 AI 자동 구조화 (주제에 맞는 최적 서식)",
+            "📊 무지 비교 표 (개념/이론/관점 비교용)",
+            "🌳 무지 위계/분류 상자 (계통도 및 분류용)",
+            "🔄 무지 흐름도 (단계/순서/인과관계용)",
+            "📌 무지 코넬 서식 (섹션 구분 + 요약란)"
         ]
     )
     
@@ -112,7 +106,7 @@ with col_config:
         placeholder="예시:\n인공지능, 머신러닝, 딥러닝 개념 정리 표와 머신러닝 학습 유형(지도/비지도/강화학습) 비교 표를 만들어주고, 과적합 해결 방안과 K-Means 단계별 정리 상자 틀을 만들어줘."
     )
     
-    submit_btn = st.button("🚀 장 단위 무지 템플릿 생성", use_container_width=True)
+    submit_btn = st.button("🚀 100% 무지 템플릿 생성", use_container_width=True)
 
 with col_view:
     st.subheader("🖼️ 템플릿 미리보기 (장 단위)")
@@ -123,9 +117,9 @@ with col_view:
         elif UPSTAGE_API_KEY == "YOUR_UPSTAGE_API_KEY_HERE":
             st.error("⚠️ 코드 상단의 UPSTAGE_API_KEY 변수에 실제 API 키를 입력해 주세요.")
         else:
-            with st.spinner("표 문법 검증 및 A4 장 단위 규격에 맞춰 제작 중입니다..."):
+            with st.spinner("개념 설명을 모두 지우고 순수 필기용 공백 틀을 제작 중입니다..."):
                 try:
-                    # 완벽한 HTML 문법 규격 및 장 잘림 방지 프롬프트
+                    # 퓨샷(Few-Shot) 예시를 통한 100% 공백 셀 보장 프롬프트
                     prompt_template = """
 [사용자 입력 정보]
 1. 템플릿 양식: {template_type}
@@ -133,26 +127,27 @@ with col_view:
 3. 학습 주제:
 {class_notes}
 
-[HTML 표 문법 필수 준수 규칙 (오류 엄금)]
-1. 모든 표(table) 생성 시 아래의 **표준 HTML 구조**를 완벽하게 지키세요.
-   - <th> 태그 수와 각 <tr> 안의 <td> 태그 수는 정확히 일치해야 합니다.
-   - 단 하나의 <td>도 닫는 태그(</td>)를 누락하거나 `<td><td>`처럼 중첩해서 쓰지 마세요.
-   - 올바른 예시:
-     <table>
-       <thead><tr><th>구분</th><th>특징</th></tr></thead>
-       <tbody>
-         <tr><td></td><td></td></tr>
-         <tr><td></td><td></td></tr>
-       </tbody>
-     </table>
+[절대 규칙: 본문 설명/해설/특징 100% 제거 및 빈 셀 생성]
+1. 당신은 '답안지'가 아닌 '공백 시험지/노트 서식'을 만드는 생성기입니다.
+2. 각 행의 구분명(예: 지도학습, 비지도학습)을 제외하고, 특징/설명/사례/원인/해결책 등 내용이 작성되는 모든 셀은 반드시 `<td></td>` 형태로 비워두어야 합니다.
 
-[본문 100% 무지(공백) 규칙]최중요 규칙!!!!!!!!!!!
-1. <th>, .section-title, .sub-title 외의 본문 공간(<td>, .blank-box) 내부에 문장, 키워드, 예시, 힌트를 절대 넣지 마세요.
-2. 중요***필기용 셀은 <td></td>, 박스는 <div class="blank-box"></div> 형태로 완벽한 공백으로 두세요.***
+[작성 예시 (FEW-SHOT EXAMPLES)]
+❌ 잘못된 작성 방식 (절대 금지!):
+<tr>
+  <td>지도학습</td>
+  <td>레이블(정답) 제공 및 스팸 메일 분류에 활용</td>
+</tr>
 
-[페이지 overflow잘림 방지 규칙]
-1. 한 개 페이지(<div class="page">)에 너무 많은 내용을 몰아넣지 마세요. (A4 높이 초과 방지)
-2. 한 페이지에는 [제목 1개 + 표 1~2개 + 공백 박스 1~2개] 수준으로 적절히 배치하고, 분량이 넘어가면 반드시 다음 <div class="page">...</div>로 분할하여 작성하세요.
+✅ 올바른 작성 방식 (필수 준수!):
+<tr>
+  <td>지도학습</td>
+  <td></td>
+  <td></td>
+</tr>
+
+[HTML 표 문법 및 페이지 분할 규칙]
+1. 모든 표(table)의 <th> 개수와 각 <tr> 안의 <td> 개수는 완벽히 일치해야 합니다.
+2. 한 개 페이지(<div class="page">)에 너무 많은 요소가 들어가 인쇄 시 잘리지 않도록 적절히 2~3개의 <div class="page">로 분할하세요.
 
 [HTML5/JS 템플릿 구조]
 <!DOCTYPE html>
@@ -172,8 +167,8 @@ with col_view:
   .sub-title {{ font-weight: bold; color: #334155; margin: 14px 0 8px 0; font-size: 15px; }}
   table {{ width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; }}
   th {{ background-color: #f1f5f9; font-weight: bold; color: #1e293b; text-align: center; border: 1px solid #cbd5e1; padding: 10px; font-size: 14px; }}
-  td {{ border: 1px solid #cbd5e1; padding: 10px; height: 48px; vertical-align: top; }}
-  .blank-box {{ border: 1px dashed #94a3b8; border-radius: 6px; min-height: 90px; background-color: #fafafa; margin-bottom: 18px; }}
+  td {{ border: 1px solid #cbd5e1; padding: 10px; height: 50px; vertical-align: top; }}
+  .blank-box {{ border: 1px dashed #94a3b8; border-radius: 6px; min-height: 100px; background-color: #fafafa; margin-bottom: 18px; }}
   @media print {{
     .nav-bar {{ display: none; }}
     .page {{ display: block !important; break-after: page; box-shadow: none; padding: 0; }}
@@ -190,9 +185,9 @@ with col_view:
 <div class="page-wrapper">
   <!-- 페이지 1 -->
   <div class="page active">
-     <!-- 1페이지 올바른 HTML 표 및 빈 박스 -->
+     <!-- 1페이지 올바른 HTML 표 (설명 셀은 반드시 <td></td>로만 작성) -->
   </div>
-  <!-- 필요시 페이지 2, 3 분할 -->
+  <!-- 분량이 넘치거나 주제가 바뀌면 페이지 2, 3으로 분할 -->
 </div>
 <script>
   let currentPage = 0;
@@ -231,7 +226,7 @@ with col_view:
 </html>
 
 [응답 형식]
-반드시 마크다운이나 다른 설명 없이 유효한 JSON 형식으로만 응답하세요.
+반드시 부연 설명 없이 유효한 JSON 형식으로만 응답하세요.
 "html_code": "<!DOCTYPE html><html>...</html>"
 """
 
@@ -246,7 +241,7 @@ with col_view:
                         messages=[
                             {
                                 "role": "system",
-                                "content": "You are a precise HTML layout compiler. You never write invalid HTML table syntax like <td><td>. You split large documents across multiple clean page divs without exceeding page height limits."
+                                "content": "You are a worksheet template generator. You NEVER write answers or explanations inside <td> cells. All content/feature cells MUST BE strictly empty `<td></td>`."
                             },
                             {
                                 "role": "user",
@@ -272,9 +267,9 @@ with col_view:
 
                     # 다운로드 버튼
                     st.download_button(
-                        label="💾 완벽한 무지 템플릿 다운로드 (HTML)",
+                        label="💾 100% 무지 템플릿 다운로드 (HTML)",
                         data=html_code,
-                        file_name="clean_study_template.html",
+                        file_name="pure_blank_template.html",
                         mime="text/html",
                         use_container_width=True
                     )
