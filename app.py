@@ -6,7 +6,7 @@ from openai import OpenAI
 # ==============================================================================
 # 1. API 키 설정 (코드 내부 고정)
 # ==============================================================================
-UPSTAGE_API_KEY = "up_Y7OKHBUB2q7pi7C4E1ILIWItBAUOG"  # 여기에 발급받으신 Upstage API Key를 입력하세요.
+UPSTAGE_API_KEY = "up_Y7OKHBUB2q7pi7C4E1ILIWItBAUOG"  # 발급받으신 Upstage API Key를 입력하세요.
 
 client = OpenAI(
     api_key=UPSTAGE_API_KEY,
@@ -71,12 +71,12 @@ with col_output:
         if not class_notes.strip():
             st.warning("학습할 내용을 입력해 주세요.")
         elif UPSTAGE_API_KEY == "YOUR_UPSTAGE_API_KEY_HERE":
-            st.error("코드 상단의 `UPSTAGE_API_KEY` 변수에 실제 Upstage API 키를 입력해 주세요.")
+            st.error("코드 상단의 UPSTAGE_API_KEY 변수에 실제 Upstage API 키를 입력해 주세요.")
         else:
             with st.spinner("AI가 학습 내용의 구조를 분석하여 최적의 복습 서식을 디자인 중입니다..."):
                 try:
-                    # 핵심 프롬프트: '완성된 요약본'이 아닌 '구조화된 채우기용 학습 양식' 생성
-                    prompt = f"""
+                    # f-string 중괄호 충돌을 방지하기 위한 안전한 문자열 템플릿
+                    prompt_template = """
 [사용자 입력 정보]
 1. 선호 템플릿 표현 양식: {template_type}
 2. 노트 규격: {note_size}
@@ -84,12 +84,12 @@ with col_output:
 {class_notes}
 
 [템플릿 제작 핵심 규칙 (필수 준수)]
-1. **완성된 정답 요약본을 작성하지 마세요.**
-2. 입력된 학습 내용의 **구조적 특성**을 분석하여 맞춤형 서식을 만드세요:
-   - **비교/대조 개념인 경우**: 비교 기준(개념, 특징, 장단점 등)이 들어간 '비교 표(Table)' 형태로 틀을 만들고, 내부 셀은 작성할 수 있도록 비워두거나 힌트/빈칸 `[       ]`을 배치하세요.
-   - **분류/위계 체계인 경우 (예: 3역 6계 등)**: 마인드맵 스타일의 계통도, 트리 구조 Box, 혹은 단계별 분류 표로 틀을 만드세요.
-   - **과정/순서인 경우**: Flowchart 형태의 연결된 박스를 배치하세요.
-3. 학습자가 직접 손필기하거나 타이핑하며 채워갈 수 있도록 **충분한 작성 공간(빈 셀, 빈 상자, 밑줄, 점선)**을 마련하세요.
+1. 완성된 정답 요약본을 작성하지 마세요.
+2. 입력된 학습 내용의 구조적 특성을 분석하여 맞춤형 서식을 만드세요:
+   - 비교/대조 개념인 경우: 비교 기준(개념, 특징, 장단점 등)이 들어간 '비교 표(Table)' 형태로 틀을 만들고, 내부 셀은 작성할 수 있도록 비워두거나 힌트/빈칸 [       ]을 배치하세요.
+   - 분류/위계 체계인 경우 (예: 3역 6계 등): 마인드맵 스타일의 계통도, 트리 구조 Box, 혹은 단계별 분류 표로 틀을 만드세요.
+   - 과정/순서인 경우: Flowchart 형태의 연결된 박스를 배치하세요.
+3. 학습자가 직접 손필기하거나 타이핑하며 채워갈 수 있도록 충분한 작성 공간(빈 셀, 빈 상자, 밑줄, 점선)을 마련하세요.
 
 [페이지 레이아웃 및 CSS 규칙]
 - 선택된 규격({note_size})에 완벽히 맞추어 디자인하세요:
@@ -97,44 +97,63 @@ with col_output:
   * B5: width: 176mm; min-height: 250mm;
   * Letter: width: 215.9mm; min-height: 279.4mm;
   * iPad: width: 100%; aspect-ratio: 16/9; max-width: 1024px;
-- 내용이 길어 2장 이상 필요 시, 반드시 개별 `<div class="page">...</div>` 태그로 구분하세요.
-- CSS 스타일 적용 예시:
-  ```css
-  body {{
-      background-color: #f0f0f0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      padding: 20px;
-      margin: 0;
-      font-family: 'Noto Sans KR', sans-serif;
-  }}
-  .page {{
-      background: white;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-      box-sizing: border-box;
-      padding: 15mm;
-      break-after: page;
-      page-break-after: always;
-  }}
-  table {{
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-  }}
-  th, td {{
-      border: 1px solid #cbd5e1;
-      padding: 12px;
-      text-align: center;
-  }}
-  th {{
-      background-color: #f1f5f9;
-      font-weight: bold;
-  }}
-  .diagram-box {{
-      border: 2px dashed #94a3b8;
-      border-radius: 8px;
-      padding: 15px;
-      background-color: #fafafa;
-  }}
+- 내용이 길어 2장 이상 필요 시, 반드시 개별 <div class="page">...</div> 태그로 구분하세요.
+- CSS 스타일 가이드:
+  body는 flex column, align-items center, background #f0f0f0로 설정하고,
+  .page는 background white, box-shadow, padding 15mm, break-after: page로 지정하세요.
+  table, .diagram-box 등의 테두리는 은은한 색상(#cbd5e1 등)으로 가독성 좋게 스타일링하세요.
+
+[응답 형식]
+반드시 유효한 JSON 형식으로만 응답하세요. 마크다운 코드 블록이나 기타 텍스트는 절대 포함하지 마세요.
+
+"html_code": "<!DOCTYPE html><html><head><style>...</style></head><body>...</body></html>"
+"""
+                    # 변수 치환
+                    prompt = prompt_template.format(
+                        template_type=template_type,
+                        note_size=note_size,
+                        class_notes=class_notes
+                    )
+
+                    # Upstage Solar API 호출
+                    response = client.chat.completions.create(
+                        model="solar-pro",
+                        messages=[
+                            {
+                                "role": "system",
+                                "content": "You are an expert instructional designer who creates interactive study worksheets and structured HTML/CSS active recall templates based on educational concepts. Always return valid JSON with only the 'html_code' field."
+                            },
+                            {
+                                "role": "user",
+                                "content": prompt
+                            }
+                        ],
+                        temperature=0.2
+                    )
+
+                    # JSON 파싱 및 예외 처리
+                    raw_response = response.choices[0].message.content.strip()
+                    if raw_response.startswith("```json"):
+                        raw_response = raw_response[7:]
+                    if raw_response.startswith("```"):
+                        raw_response = raw_response[3:]
+                    if raw_response.endswith("```"):
+                        raw_response = raw_response[:-3]
+
+                    data = json.loads(raw_response.strip())
+                    html_code = data.get("html_code", "")
+
+                    # 1. 시각적 미리보기
+                    components.html(html_code, height=800, scrolling=True)
+
+                    # 2. 다운로드 버튼
+                    st.download_button(
+                        label="💾 학습지 템플릿 다운로드 (HTML)",
+                        data=html_code,
+                        file_name="study_template.html",
+                        mime="text/html",
+                        use_container_width=True
+                    )
+
+                except Exception as e:
+                    st.error(f"템플릿 생성 중 오류가 발생했습니다: {e}")
