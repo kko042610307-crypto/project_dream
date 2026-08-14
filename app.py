@@ -17,7 +17,7 @@ client = OpenAI(
 # 2. Page Config & Custom CSS (UI 디자인)
 # ==============================================================================
 st.set_page_config(
-    page_title="AI 맞춤형 학습 템플릿 생성기",
+    page_title="AI 맞춤형 학습 템플릿",
     page_icon="✨",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -63,10 +63,9 @@ st.markdown("""
 # 히어로 헤더 출력
 st.markdown("""
 <div class="hero-container">
-    <div class="hero-title">✨ AI 맞춤형 100% 무지 학습 템플릿 생성기</div>
+    <div class="hero-title">✨ AI 맞춤형 학습 템플릿</div>
     <div class="hero-subtitle">
-        개념 설명이나 힌트를 모두 배제하고 <b>오직 사용자가 직접 채워 넣을 수 있는 100% 공백 필기 틀</b>을 만듭니다.<br>
-        용지 규격별 엄격한 페이지 분할 및 열 단위 공백 검증 엔진이 탑재되어 있습니다.
+        사용자가 필기하고 싶은 내용을 입력하면 그에 맞는 템플릿을 제공해줍니다.
     </div>
 </div>
 """, unsafe_allow_html=True)
