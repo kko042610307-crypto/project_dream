@@ -91,7 +91,9 @@ SIZE_MAP = {
         "max_elem": "B5 크기이므로 한 <div class='page'> 당 [표 1~2개] 이하로 구성하세요."
     },
     "iPad Screen (4:3)": {
-        "max_elem": "한 <div class='page'> 당 [가로형 표 1개] 이하만 구성하세요."
+        "width": "240mm", 
+        "height": "180mm", 
+        "max_elem": "4:3 비율의 아이패드 화면이므로 한 <div class='page'> 당 [표 1개] 또는 [상자 2개] 이하로 깔끔하게 구성하세요."
     }
 }
 
