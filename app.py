@@ -61,7 +61,7 @@ with col_input:
         placeholder="예시:\n생명과학 3역 6계 분류 체계를 정리할 수 있는 분류 표와 박스를 만들어줘.\n또는 사회문화 기능론/갈등론/상징적 상호작용론을 비교 정리할 수 있는 완전 공백 표를 구성해줘."
     )
     
-    submit_btn = st.button("🚀 순수 무지 템플릿 생성하기", use_container_width=True)
+    submit_btn = st.button("🚀 장 단위 무지 템플릿 생성하기", use_container_width=True)
 
 with col_output:
     st.subheader("🖼️ 템플릿 미리보기 (장 단위 넘기기)")
@@ -72,9 +72,9 @@ with col_output:
         elif UPSTAGE_API_KEY == "YOUR_UPSTAGE_API_KEY_HERE":
             st.error("코드 상단의 UPSTAGE_API_KEY 변수에 실제 Upstage API 키를 입력해 주세요.")
         else:
-            with st.spinner("학습 내용을 모두 제거하고 100% 필기용 공백 틀을 생성 중입니다..."):
+            with st.spinner("다중 페이지의 완벽한 공백 서식을 디테일하게 생성 중입니다..."):
                 try:
-                    # 학습적 내용 배제 및 순수 무지 틀 생성을 위한 엄격한 프롬프트
+                    # 다중 페이지 완성도 및 100% 공백 유지를 위한 엄격한 프롬프트
                     prompt_template = """
 [사용자 입력 정보]
 1. 템플릿 양식: {template_type}
@@ -82,18 +82,21 @@ with col_output:
 3. 학습 주제 및 요구사항:
 {class_notes}
 
-[학습적 내용 전면 삭제 및 100% 공백 틀 절대 규칙]
-1. **학습 관련 설명, 요약, 문장, 예시, 힌트를 본문에 절대로 작성하지 마세요.**
-2. 본문의 모든 표 셀(`<td>`), 구획 박스(`<div>`), 항목 공간은 **사용자가 처음부터 끝까지 손필기/타이핑할 수 있는 완전한 공백(빈 칸)**이어야 합니다.
-3. 오직 **구조적 틀(제목, 표의 행/열 헤더 `<th>`, 구분 레이블)**만 작성하고, 나머지 필기 영역은 너비와 높이가 확보된 비어있는 상자/셀로 구성하세요.
+[원칙 1: 본문 100% 빈칸 보장 - 텍스트 채우기 절대 금지]
+- <th>(표 헤더), .section-title(구획 제목), .sub-title(소제목) 외에는 본문 내부(<td>, .blank-box)에 그 어떤 단어, 힌트, 요약, 문장도 작성하지 마세요.
+- 필기용 데이터 셀은 반드시 <td></td> 와 같이 완벽히 비워두어야 합니다.
+- 필기용 박스는 <div class="blank-box"></div> 와 같이 내부에 어떠한 텍스트도 넣지 마세요.
 
-[HTML 문법 및 품질 준수 절대 규칙]
-1. 문법적으로 100% 유효한 W3C 표준 HTML5 문서를 생성하세요.
-2. 태그 훼손 (예: `<div> class=...`, `<th> style=...`, `<tr><tr>`, `<td>>내용`)을 절대 일으키지 마세요.
-3. 모든 HTML 태그는 정확히 열리고 닫혀야 합니다.
+[원칙 2: 다중 페이지(2장 이상) 작성 시 완벽성 보장]
+- 요구사항 분량이 많아 2장 이상의 <div class="page">가 필요한 경우, 2번째, 3번째 페이지도 첫 번째 페이지와 동일한 높은 품질과 완벽한 HTML 구조로 작성하세요.
+- 뒷부분 페이지라고 해서 태그를 작성하다 말거나, 구조를 생략하거나, 미완성 상태로 끝내는 것을 절대 금지합니다.
+- 모든 <div class="page">는 완벽히 독립된 페이지 구획이어야 하며, 동일한 서식 디테일을 유지해야 합니다.
 
-[장 단위 넘기기(Page Pagination) 필수 구조]
-아래 자바스크립트 슬라이드 넘기기 레이아웃 구조와 CSS를 그대로 사용하여 완성하세요:
+[원칙 3: 고정 높이 지정으로 빈 박스/셀 형태 유지]
+- 글자가 없어도 수직 공간이 무너지지 않도록 CSS의 고정 높이(height, min-height) 스펙을 준수하세요.
+
+[필수 HTML/JS 통합 구조]
+아래 자바스크립트 페이지 슬라이더 및 CSS 구조를 사용하여 단일 HTML5 문서를 완성하세요:
 
 <!DOCTYPE html>
 <html>
@@ -102,7 +105,6 @@ with col_output:
 <style>
   body {{ margin: 0; background-color: #e2e8f0; font-family: 'Noto Sans KR', sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }}
   
-  /* 상단 페이지 이동 네비게이션 바 */
   .nav-bar {{ position: sticky; top: 0; z-index: 1000; width: 100%; background: #1e293b; color: white; padding: 12px 0; display: flex; justify-content: center; align-items: center; gap: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }}
   .nav-btn {{ background: #3b82f6; color: white; border: none; padding: 8px 18px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s; }}
   .nav-btn:disabled {{ background: #64748b; cursor: not-allowed; opacity: 0.6; }}
@@ -110,17 +112,17 @@ with col_output:
   
   .page-wrapper {{ padding: 20px 0; display: flex; justify-content: center; width: 100%; }}
   
-  /* 장 단위 페이지 */
-  .page {{ display: none; background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.15); box-sizing: border-box; padding: 18mm; border-radius: 4px; }}
+  .page {{ display: none; background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.15); box-sizing: border-box; padding: 18mm; border-radius: 4px; width: 210mm; min-height: 297mm; }}
   .page.active {{ display: block; }}
   
-  /* 요소 스타일 (순수 필기용 공간) */
   .section-title {{ font-size: 18px; font-weight: bold; color: #1e293b; border-bottom: 2px solid #3b82f6; padding-bottom: 6px; margin: 20px 0 12px 0; }}
+  .sub-title {{ font-weight: bold; color: #475569; margin: 12px 0 6px 0; font-size: 14px; }}
+  
   table {{ width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; }}
-  th {{ background-color: #f1f5f9; font-weight: bold; color: #334155; text-align: center; border: 1px solid #cbd5e1; padding: 10px; }}
-  td {{ border: 1px solid #cbd5e1; padding: 12px; height: 40px; vertical-align: top; }}
-  .blank-box {{ border: 1px dashed #94a3b8; border-radius: 6px; min-height: 80px; background-color: #fafafa; margin-bottom: 15px; }}
-  .sub-title {{ font-weight: bold; color: #475569; margin: 12px 0 6px 0; }}
+  th {{ background-color: #f1f5f9; font-weight: bold; color: #334155; text-align: center; border: 1px solid #cbd5e1; padding: 10px; font-size: 14px; }}
+  td {{ border: 1px solid #cbd5e1; padding: 10px; height: 45px; vertical-align: top; }} /* 고정 높이 확보 */
+  
+  .blank-box {{ border: 1px dashed #94a3b8; border-radius: 6px; min-height: 100px; background-color: #fafafa; margin-bottom: 15px; }} /* 공백 박스 고정 높이 */
 </style>
 </head>
 <body>
@@ -132,10 +134,11 @@ with col_output:
 </div>
 
 <div class="page-wrapper">
-  <!-- 내용이 넘치거나 주제 구획이 바뀌면 <div class="page">를 나누어 생성하세요 -->
+  <!-- 페이지 1 -->
   <div class="page active">
-     <!-- 1페이지 (오직 빈 표, 빈 상자, 목차/헤더 텍스트만 포함) -->
+     <!-- 1페이지 구조 (완전 빈 <td></td> 및 <div class="blank-box"></div>만 사용) -->
   </div>
+  <!-- 분량이 많을 경우 2페이지, 3페이지도 동일한 고품질로 생성 -->
 </div>
 
 <script>
@@ -176,7 +179,7 @@ with col_output:
 </html>
 
 [응답 형식]
-반드시 유효한 JSON 형식으로만 응답하세요. 마크다운 코드 블록이나 부연 설명은 절대 포함하지 마세요.
+반드시 유효한 JSON 형식으로만 응답하세요. 부연 설명이나 마크다운 코드 블록은 절대 포함하지 마세요.
 
 "html_code": "<!DOCTYPE html><html>...</html>"
 """
@@ -193,14 +196,14 @@ with col_output:
                         messages=[
                             {
                                 "role": "system",
-                                "content": "You are a specialized layout designer. Your task is to generate ONLY empty blank tables, boxes, and structural framework HTML without any explanatory or educational body text. Output valid JSON only."
+                                "content": "You are a professional compiler for printable blank worksheets. You NEVER fill content in table data cells or writing boxes. You always generate complete, perfectly formatted HTML multi-page structures without dropping quality on later pages. Return valid JSON only."
                             },
                             {
                                 "role": "user",
                                 "content": prompt
                             }
                         ],
-                        temperature=0.1
+                        temperature=0.05  # 생성 일관성 극대화 및 내용 일탈 방지
                     )
 
                     # JSON 파싱
