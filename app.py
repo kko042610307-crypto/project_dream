@@ -146,7 +146,7 @@ with col_view:
        </tbody>
      </table>
 
-[본문 100% 무지(공백) 규칙]
+[본문 100% 무지(공백) 규칙]최중요 규칙!!!!!!!!!!!
 1. <th>, .section-title, .sub-title 외의 본문 공간(<td>, .blank-box) 내부에 문장, 키워드, 예시, 힌트를 절대 넣지 마세요.
 2. 중요***필기용 셀은 <td></td>, 박스는 <div class="blank-box"></div> 형태로 완벽한 공백으로 두세요.***
 
