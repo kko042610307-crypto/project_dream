@@ -18,13 +18,13 @@ client = OpenAI(
 # 2. Streamlit UI 레이아웃 설정
 # ==============================================================================
 st.set_page_config(
-    page_title="AI 맞춤형 수업 노트 생성기",
-    page_icon="📝",
+    page_title="AI 맞춤형 빈 노트 서식 생성기",
+    page_icon="📐",
     layout="wide"
 )
 
-st.title("📝 AI 맞춤형 수업 노트 템플릿 생성기")
-st.write("자연어로 작성한 수업 필기와 원하는 방식을 입력하면, Upstage Solar AI가 맞춤형 HTML/CSS 노트 템플릿을 디자인해 드립니다.")
+st.title("📐 AI 맞춤형 빈 노트 템플릿 생성기")
+st.write("수업 정리 주제를 입력하면, 처음부터 끝까지 직접 필기하며 정리할 수 있는 **맞춤형 빈 노트 양식(HTML/CSS)**을 디자인해 드립니다.")
 
 st.divider()
 
@@ -32,17 +32,18 @@ st.divider()
 col_input, col_info = st.columns([1, 1])
 
 with col_input:
-    st.subheader("⚙️ 필기 옵션 및 내용 입력")
+    st.subheader("⚙️ 필기 옵션 및 주제 입력")
     
     # [고정 입력 1] 선호하는 노트 필기 방식
     note_style = st.selectbox(
         "📌 선호하는 노트 필기 방식",
         [
-            "코넬 노트 (Cornell Notes - 핵심키워드 / 필기 / 요약 섹션)",
-            "개요식 정리 (Outline Style - 위계구조 및 불릿포인트 중심)",
-            "3분할 정리 (3-Column Style - 질문 / 내용 / 핵심 요약)",
-            "Q&A 개념 정리 (Question & Answer Style)",
-            "자유 요약 및 키워드 정리 (Freeform Summary)"
+            "코넬 노트 (Cornell Notes - 핵심키워드 컬럼 / 넓은 필기 영역 / 하단 요약 상자)",
+            "줄글 노트 (Lined / Ruled Notebook - 세련된 줄눈 간격 및 섹션 구분)",
+            "그리드/모눈 노트 (Grid Paper - 개념 정리 및 도표 작성에 유용한 격자 서식)",
+            "3분할 노트 (3-Column Layout - 개념 / 상세 내용 / 개인 노트 영역)",
+            "Q&A 질문 노트 (Question & Answer Layout - 질문 상자 및 답변 필기 공간)",
+            "구조화 섹션 노트 (Sectioned Layout - 주제별 구분 박스 및 필기 공간)"
         ]
     )
     
@@ -50,7 +51,7 @@ with col_input:
     note_size = st.selectbox(
         "📐 노트 사이즈 / 규격",
         [
-            "A4 (210 x 297 mm - 표준 문서 규격)",
+            "A4 (210 x 297 mm - 표준 인쇄 규격)",
             "B5 (176 x 250 mm - 일반 단권화 서식)",
             "Letter (215.9 x 279.4 mm)",
             "iPad / 태블릿 스크린 뷰 (16:9 가로 화면 맞춤)"
@@ -59,22 +60,21 @@ with col_input:
     
     # [가변 입력] 자연어 수업 정리 내용
     class_notes = st.text_area(
-        "✏️ 수업 정리 내용 (자연어)",
+        "📝 노트에 반영할 수업 정리 / 주제 개요",
         height=250,
-        placeholder="예시:\n오늘 데이터베이스 수업에서 정규화에 대해 배웠다.\n1정규형은 도메인이 원자값이어야 하고, 2정규형은 부분 함수 종속성을 제거해야 함.\n3정규형은 이행적 함수 종속성을 제거하는 것임. 주요 키워드는 기본키, 외래키, 완전 함수 종속..."
+        placeholder="예시:\n오늘 데이터베이스 수업에서 정규화에 대해 배웠다.\n1정규형(도메인 원자값), 2정규형(부분 함수 종속성 제거), 3정규형(이행적 함수 종속성 제거)에 대한 내용을 구분해서 작성하고 싶어. 하단에는 관련 핵심 키워드 정리 공간을 만들어줘."
     )
     
-    submit_btn = st.button("🚀 맞춤형 노트 템플릿 생성하기", use_container_width=True)
+    submit_btn = st.button("🚀 맞춤형 빈 노트 서식 생성하기", use_container_width=True)
 
 with col_info:
-    st.subheader("💡 사용 안내")
+    st.subheader("💡 빈 노트 서식 활용 안내")
     st.info(
         """
         **이 서비스는 어떻게 동작하나요?**
-        1. **고정 옵션 선택**: 사용하실 노트 필기 양식과 규격을 선택합니다.
-        2. **수업 내용 입력**: 수업 중 적어둔 막필기나 줄글 형태의 수업 정리를 자유롭게 작성합니다.
-        3. **AI 처리**: Upstage의 Solar 모델이 내용을 구조화하여 최적의 레이아웃과 CSS 스타일링이 적용된 HTML 문서를 생성합니다.
-        4. **결과 확인**: 생성된 노트를 화면에서 직접 확인하고 필요 시 HTML 파일로 저장할 수 있습니다.
+        1. **완전 공백 양식 설계**: 입력된 수업 주제 구조에 맞춰 **내용이 완전히 비어있는 필기용 틀(상자, 줄글, 모눈, 섹션)**을 디자인합니다.
+        2. **맞춤형 섹션 구성**: 사용자가 작성한 목차와 주제에 적합하도록 타이틀, 섹션 헤더, 필기 영역 크기가 레이아웃에 반영됩니다.
+        3. **디지털 & 오프라인 겸용**: HTML 파일로 다운로드하여 태블릿 필기 앱(굿노트, 노타빌리티 등)의 서식으로 불러오거나, 인쇄하여 직접 손필기할 수 있습니다.
         """
     )
 
@@ -83,31 +83,34 @@ with col_info:
 # ==============================================================================
 if submit_btn:
     if not class_notes.strip():
-        st.warning("수업 정리 내용을 입력해 주세요!")
+        st.warning("노트에 반영할 수업 정리/주제 내용을 입력해 주세요!")
     elif UPSTAGE_API_KEY == "YOUR_UPSTAGE_API_KEY_HERE":
-        st.error("코드 상단의 `UPSTAGE_API_KEY` 변수에 실제 Upstage API 키를 넣어주세요!")
+        st.error("코드 상단의 `UPSTAGE_API_KEY` 변수에 실제 Upstage API 키를 입력해 주세요!")
     else:
-        with st.spinner("Upstage Solar AI가 수업 내용을 분석하여 최적의 노트 템플릿을 제작 중입니다..."):
+        with st.spinner("Upstage Solar AI가 직접 필기할 수 있는 맞춤형 빈 노트 양식을 디자인 중입니다..."):
             try:
-                # Prompt 구성
+                # Prompt 구성 (내용을 완전히 비우고 양식/틀만 생성하도록 강조)
                 prompt = f"""
 [사용자 입력 정보]
 1. 필기 양식 스타일: {note_style}
 2. 노트 규격: {note_size}
-3. 수업 정리 내용:
+3. 수업 주제 및 구조 요구사항:
 {class_notes}
 
 [지시 사항]
-- 사용자가 입력한 수업 정리 내용을 바탕으로, 지정된 필기 스타일과 규격에 맞는 고품질의 HTML/CSS 노트를 제작하세요.
+- 입력된 수업 주제 및 요청 구조를 바탕으로, 사용자가 처음부터 끝까지 **직접 내용을 손필기하거나 작성할 수 있는 '완전한 빈 노트 양식(Blank Note Template)'**을 생성하세요.
+- **주의사항 (절대 준수)**:
+  1. 본문 영역에는 설명글, 요약 텍스트, 완료된 내용, 또는 빈칸 문제(`_____`)를 절대 채워 넣지 마세요.
+  2. 사용자가 직접 써 내려갈 수 있는 **완전한 공백 영역(줄글 선, 빈 상자/입력 영역, 격자 패턴, 넉넉한 여백)**으로 디자인해야 합니다.
+  3. 사용자가 입력한 내용을 참고하여 **'메인 제목', '주제별 구분 영역 제목(Section Header)', '키워드 단서 영역', '하단 빈 요약 상자'** 등 서식의 틀(Structure)만 세련되게 배치하세요.
 - HTML 내부 `<style>` 태그에 CSS를 통합하여 완성된 단일 HTML 문서를 생성하세요.
-- 눈이 편안한 깔끔한 색상 팔레트, 가독성 높은 폰트(Noto Sans KR 등), 여백 및 경계선 구분을 적용하세요.
-- 선택된 노트 규격 비율 및 노트 필기 방식의 구조적 특징이 디자인에 명확히 반영되어야 합니다.
+- 선택된 노트 규격 비율 및 필기 방식의 레이아웃(줄간격, 필기 박스 테두리, 은은한 구분선 색상 등)이 가독성 높게 디자인되어야 합니다.
 
 [응답 형식]
-반드시 유효한 JSON 형식으로만 응답하세요. 다른 부연 설명이나 마크다운 코드 블록(```json 등)은 절대 작성하지 마세요.
+반드시 유효한 JSON 형식으로만 응답하세요. 부연 설명이나 마크다운 코드 블록(```json 등)은 작성하지 마세요.
 
 {{
-  "explanation": "작성된 노트 템플릿의 레이아웃 구성 및 활용법에 대한 2-3줄의 간단한 설명글",
+  "explanation": "디자인된 빈 노트 서식의 레이아웃 구조와 필기 활용 팁에 대한 2-3줄의 간단한 설명글",
   "html_code": "<!DOCTYPE html><html><head><style>...</style></head><body>...</body></html>"
 }}
 """
@@ -118,7 +121,7 @@ if submit_btn:
                     messages=[
                         {
                             "role": "system",
-                            "content": "You are an expert UI/UX designer and educational content structure specialist. Always output valid JSON only."
+                            "content": "You are a professional stationery and notebook layout designer specializing in HTML/CSS printable templates. Always output valid JSON only."
                         },
                         {
                             "role": "user",
@@ -140,30 +143,28 @@ if submit_btn:
                     raw_response = raw_response[:-3]
                 
                 data = json.loads(raw_response.strip())
-                explanation = data.get("explanation", "노트 생성 결과입니다.")
+                explanation = data.get("explanation", "맞춤형 빈 노트 템플릿이 생성되었습니다.")
                 html_code = data.get("html_code", "")
 
-                st.success("✨ 맞춤형 노트 템플릿 생성이 완료되었습니다!")
+                st.success("✨ 맞춤형 빈 노트 서식 생성이 완료되었습니다!")
                 
                 st.divider()
                 
                 # 1. 간단한 설명 글 출력
-                st.subheader("📋 노트 정리 안내")
+                st.subheader("📋 노트 레이아웃 및 활용 가이드")
                 st.markdown(explanation)
                 
-                st.space = 10
-                
                 # 2. HTML/CSS 시각적 렌더링 출력
-                st.subheader("🎨 맞춤형 노트 템플릿 미리보기")
+                st.subheader("🎨 생성된 빈 노트 템플릿 미리보기")
                 components.html(html_code, height=850, scrolling=True)
 
                 # 3. HTML 소스 코드 및 다운로드 버튼 제공
-                with st.expander("📄 HTML / CSS 코드 보기 및 다운로드"):
+                with st.expander("📄 HTML / CSS 코드 확인 및 다운로드"):
                     st.code(html_code, language="html")
                     st.download_button(
-                        label="💾 HTML 문서로 다운로드",
+                        label="💾 빈 노트 양식 다운로드 (인쇄/태블릿 필기용)",
                         data=html_code,
-                        file_name="note_template.html",
+                        file_name="blank_note_template.html",
                         mime="text/html"
                     )
 
