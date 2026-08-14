@@ -66,19 +66,35 @@ st.markdown("""
     <div class="hero-title">✨ AI 맞춤형 100% 무지 학습 템플릿 생성기</div>
     <div class="hero-subtitle">
         개념 설명이나 힌트를 모두 배제하고 <b>오직 사용자가 직접 채워 넣을 수 있는 100% 공백 필기 틀</b>을 만듭니다.<br>
-        용지 규격별 자동 맞춤 및 잘림 방지 페이지 분할 기능이 기본 적용되어 있습니다.
+        용지 규격별 엄격한 페이지 분할 및 열 단위 공백 검증 엔진이 탑재되어 있습니다.
     </div>
 </div>
 """, unsafe_allow_html=True)
 
 # ==============================================================================
-# 3. 용지 규격 데이터 맵
+# 3. 용지 규격 데이터 맵 및 페이지 예산
 # ==============================================================================
 SIZE_MAP = {
-    "A4 (210mm x 297mm)": {"width": "210mm", "height": "297mm", "max_elem": "한 페이지당 [표 2개] 또는 [표 1개 + 상자 2개] 이하"},
-    "A5 (148mm x 210mm)": {"width": "148mm", "height": "210mm", "max_elem": "용지가 작으므로 한 페이지당 [표 1개] 또는 [상자 2개] 이하"},
-    "B5 (176mm x 250mm)": {"width": "176mm", "height": "250mm", "max_elem": "한 페이지당 [표 1~2개] 이하"},
-    "iPad Screen (16:9)": {"width": "280mm", "height": "157.5mm", "max_elem": "가로가 넓으므로 한 페이지당 [가로형 표 1개 + 상자 1개] 이하"}
+    "A4 (210mm x 297mm)": {
+        "width": "210mm", 
+        "height": "297mm", 
+        "max_elem": "A4 크기이므로 한 <div class='page'> 당 [표 2개] 또는 [표 1개 + 상자 2개] 이하로 구성하세요."
+    },
+    "A5 (148mm x 210mm)": {
+        "width": "148mm", 
+        "height": "210mm", 
+        "max_elem": "A5는 용지가 작으므로 한 <div class='page'> 당 반드시 [표 1개] 또는 [상자 2개] 이하만 배치하세요. 내용이 많다면 <div class='page'>를 3~5개 이상 적극적으로 분할하세요!"
+    },
+    "B5 (176mm x 250mm)": {
+        "width": "176mm", 
+        "height": "250mm", 
+        "max_elem": "B5 크기이므로 한 <div class='page'> 당 [표 1~2개] 이하로 구성하세요."
+    },
+    "iPad Screen (16:9)": {
+        "width": "280mm", 
+        "height": "157.5mm", 
+        "max_elem": "가로가 넓고 세로가 짧으므로 한 <div class='page'> 당 [가로형 표 1개] 이하만 구성하세요."
+    }
 }
 
 # ==============================================================================
@@ -89,7 +105,7 @@ col_config, col_view = st.columns([1, 1.3], gap="large")
 with col_config:
     st.subheader("⚙️ 서식 설정")
     
-    # 템플릿 구조 고정 (내부 변수 처리)
+    # 템플릿 구조 고정
     template_type = "🤖 AI 자동 구조화 (학습 주제의 특성에 맞춰 최적의 무지 표/상자/디자인 자동 분할)"
     
     # 노트 용지 규격 선택
@@ -115,7 +131,7 @@ with col_view:
         elif UPSTAGE_API_KEY == "YOUR_UPSTAGE_API_KEY_HERE":
             st.error("⚠️ 코드 상단의 UPSTAGE_API_KEY 변수에 실제 API 키를 입력해 주세요.")
         else:
-            with st.spinner("용지 규격에 맞춰 잘림 없는 순수 필기용 공백 틀을 제작 중입니다..."):
+            with st.spinner("규격별 엄격한 페이지 분할 및 빈 셀 검증을 진행 중입니다..."):
                 try:
                     selected_size_info = SIZE_MAP[note_size]
                     page_w = selected_size_info["width"]
@@ -129,27 +145,29 @@ with col_view:
 3. 학습 주제:
 {class_notes}
 
-[절대 규칙 1: 본문 설명/해설/특징 100% 제거 및 빈 셀 생성]
-1. 각 행의 구분명(예: 지도학습, 비지도학습)을 제외하고, 특징/설명/사례/원인/해결책 등 내용이 작성되는 모든 셀은 반드시 `<td></td>` 형태로 비워두어야 합니다.
+[절대 규칙 1: 2번째 열부터는 무조건 100% 빈 칸 `<td></td>`]
+1. 각 행(`<tr>`)에서 오직 **1번째 `<td>`에만** 구분 명칭(예: 인공지능, 지도학습, 데이터 부족 등)을 작성하십시오.
+2. **2번째, 3번째, 4번째 이후의 모든 `<td>`에는 어떤 단어나 키워드도 절대 쓰지 말고 100% `<td></td>`로 비워두어야 합니다.**
 
 [작성 예시 (FEW-SHOT EXAMPLES)]
-❌ 잘못된 작성 방식 (절대 금지!):
+❌ 잘못된 작성 방식 (절대 금지 - 2번째, 3번째 열에 단어를 채우는 행위):
 <tr>
-  <td>지도학습</td>
-  <td>레이블(정답) 제공 및 스팸 메일 분류에 활용</td>
+  <td>인공지능</td>
+  <td>머신러닝</td> <!-- 금지! -->
+  <td>딥러닝</td>   <!-- 금지! -->
 </tr>
 
 ✅ 올바른 작성 방식 (필수 준수!):
 <tr>
-  <td>지도학습</td>
-  <td></td>
-  <td></td>
+  <td>인공지능</td>
+  <td></td> <!-- 완벽 -->
+  <td></td> <!-- 완벽 -->
 </tr>
 
-[절대 규칙 2: 용지 높이 초과/잘림 방지 (페이지 분할 규칙)]
-1. 선택된 용지 규격 세로 높이({page_h})를 초과하여 내용이 하단으로 잘리지 않도록 해야 합니다.
-2. 용지 용량 제한: {max_elem_rule}.
-3. 주제나 표의 개수가 많다면 한 페이지에 다 넣으려 하지 말고, 반드시 여러 개의 `<div class="page">...</div>`로 나누어 2페이지, 3페이지로 분할 작성하세요.
+[절대 규칙 2: 용지 높이 초과 엄금 (페이지 분할 규칙)]
+1. 선택된 용지 규격: {note_size} (세로 높이: {page_h})
+2. 용지 배치 제한: {max_elem_rule}
+3. 한 페이지에 요소를 무리하게 많이 넣어서 아래로 잘리는 것은 심각한 오류입니다. 내용이 많다면 반드시 `<div class="page">...</div>`를 여러 개(3~5개) 사용하여 페이지를 분할하세요.
 
 [HTML5/JS 템플릿 구조]
 <!DOCTYPE html>
@@ -163,7 +181,7 @@ with col_view:
   .nav-btn:disabled {{ background: #64748b; cursor: not-allowed; opacity: 0.5; }}
   .page-num {{ font-size: 15px; font-weight: bold; color: #f8fafc; }}
   .page-wrapper {{ padding: 25px 0; display: flex; justify-content: center; width: 100%; }}
-  .page {{ display: none; background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.15); box-sizing: border-box; padding: 15mm; border-radius: 4px; width: {page_w}; min-height: {page_h}; overflow: hidden; }}
+  .page {{ display: none; background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.15); box-sizing: border-box; padding: 15mm; border-radius: 4px; width: {page_w}; height: {page_h}; overflow: hidden; }}
   .page.active {{ display: block; }}
   .section-title {{ font-size: 18px; font-weight: bold; color: #0f172a; border-bottom: 2px solid #2563eb; padding-bottom: 6px; margin: 5px 0 14px 0; }}
   .sub-title {{ font-weight: bold; color: #334155; margin: 12px 0 6px 0; font-size: 14px; }}
@@ -187,9 +205,9 @@ with col_view:
 <div class="page-wrapper">
   <!-- 페이지 1 -->
   <div class="page active">
-     <!-- 1페이지 올바른 HTML 표 및 구성요소 -->
+     <!-- 1페이지 표 (규격 제한에 맞춰 표 1~2개 배치) -->
   </div>
-  <!-- 높이 초과 방지를 위해 분량에 따라 페이지 2, 3 분할 필수 -->
+  <!-- 높이 초과 방지를 위한 추가 페이지 분할 -->
 </div>
 <script>
   let currentPage = 0;
@@ -246,7 +264,7 @@ with col_view:
                         messages=[
                             {
                                 "role": "system",
-                                "content": "You are a worksheet template generator. You NEVER write answers/explanations inside <td>. You MUST strictly split pages if the content exceeds the page height."
+                                "content": "You are a worksheet template generator. NEVER put text in the 2nd, 3rd, or 4th <td> column. STRICTLY limit content per page to fit paper height."
                             },
                             {
                                 "role": "user",
@@ -267,7 +285,7 @@ with col_view:
                     data = json.loads(raw_response.strip())
                     html_code = data.get("html_code", "")
 
-                    # 미리보기 프레임 (높이 확장 및 스크롤 허용)
+                    # 미리보기 프레임
                     components.html(html_code, height=1050, scrolling=True)
 
                     # 다운로드 버튼
