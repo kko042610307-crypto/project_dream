@@ -17,32 +17,32 @@ client = OpenAI(
 # 2. Page Config
 # ==============================================================================
 st.set_page_config(
-    page_title="AI 맞춤형 빈 노트 템플릿 생성기",
-    page_icon="📝",
+    page_title="주제 맞춤형 학습 템플릿 생성기",
+    page_icon="🧠",
     layout="wide"
 )
 
-st.title("📝 AI 맞춤형 빈 노트 템플릿 생성기")
+st.title("🧠 주제 맞춤형 학습 템플릿 생성기")
+st.write("학습할 내용을 입력하면, AI가 내용의 구조(비교·분류·과정 등)를 분석하여 **직접 채워 넣으며 공부할 수 있는 맞춤형 복습 템플릿**을 만들어 드립니다.")
 
 st.divider()
 
 # ==============================================================================
-# 3. 입력 및 결과 화면 레이아웃 (2열 구성)
+# 3. 입력 및 결과 화면 레이아웃
 # ==============================================================================
 col_input, col_output = st.columns([1, 1.2], gap="large")
 
 with col_input:
-    st.subheader("⚙️ 노트 설정")
+    st.subheader("⚙️ 학습 템플릿 설정")
     
-    note_style = st.selectbox(
-        "📌 필기 양식 스타일",
+    template_type = st.selectbox(
+        "📌 템플릿 표현 양식",
         [
-            "코넬 노트 (Cornell Notes - 키워드 / 필기 / 하단 요약)",
-            "줄글 노트 (Lined Notebook - 세련된 줄눈 간격)",
-            "모눈/격자 노트 (Grid Paper - 개념 및 도표 정리용)",
-            "3분할 노트 (3-Column Layout - 개념 / 상세 / 노트)",
-            "Q&A 노트 (Question & Answer Layout - 질문 / 답변 상자)",
-            "구조화 섹션 노트 (Sectioned Layout - 주제별 구분 박스)"
+            "🤖 AI 자동 추천 (학습 내용 구조에 맞는 최적의 레이아웃 자동 생성)",
+            "📊 비교/대조 표 양식 (관점, 이론, 개념 간 차이점 한눈에 비교)",
+            "🌳 위계/분류 구조 양식 (3역 6계, 분류 체계, 마인드맵형 다이어그램)",
+            "🔄 과정/순서 흐름도 양식 (시대순, 실험 절차, 인과관계 단계별 정리)",
+            "📌 코넬 & 개념 인출 양식 (핵심 용어 정의 및 빈칸 채우기 중심)"
         ]
     )
     
@@ -57,110 +57,84 @@ with col_input:
     )
     
     class_notes = st.text_area(
-        "✍️ 수업 주제 및 노트 구조 요청",
-        height=250,
-        placeholder="예시:\n오늘 데이터베이스 수업에서 정규화에 대해 배웠어.\n1정규형, 2정규형, 3정규형을 각각 정리할 수 있는 빈 박스를 만들어주고, 하단에는 핵심 키워드 정리용 노트 칸을 만들어줘."
+        "✍️ 학습할 내용 / 수업 요약",
+        height=280,
+        placeholder="예시 1:\n생명과학 시간 생물 분류 체계 (3역 6계: 세균역, 고세균역, 진핵생물역과 6개 계의 특징을 분류하여 정리할 수 있는 표나 마인드맵 서식을 만들어줘.)\n\n예시 2:\n사회문화 - 사회를 바라보는 관점 (기능론, 갈등론, 상징적 상호작용론의 핵심 개념, 사회관, 한계점을 한눈에 비교해서 적을 수 있는 표 양식을 만들어줘.)"
     )
     
-    submit_btn = st.button("🚀 빈 노트 템플릿 생성하기", use_container_width=True)
+    submit_btn = st.button("🚀 맞춤형 학습 템플릿 생성하기", use_container_width=True)
 
 with col_output:
-    st.subheader("🖼️ 노트 미리보기")
+    st.subheader("🖼️ 생성된 학습 템플릿 미리보기")
     
     if submit_btn:
         if not class_notes.strip():
-            st.warning("수업 주제 및 구조 요청을 입력해 주세요.")
+            st.warning("학습할 내용을 입력해 주세요.")
         elif UPSTAGE_API_KEY == "YOUR_UPSTAGE_API_KEY_HERE":
             st.error("코드 상단의 `UPSTAGE_API_KEY` 변수에 실제 Upstage API 키를 입력해 주세요.")
         else:
-            with st.spinner("선택한 규격에 맞춰 장 단위 빈 노트 템플릿을 생성 중입니다..."):
+            with st.spinner("AI가 학습 내용의 구조를 분석하여 최적의 복습 서식을 디자인 중입니다..."):
                 try:
-                    # 정확한 규격 및 장 단위 분할을 요구하는 프롬프트
+                    # 핵심 프롬프트: '완성된 요약본'이 아닌 '구조화된 채우기용 학습 양식' 생성
                     prompt = f"""
 [사용자 입력 정보]
-1. 필기 양식 스타일: {note_style}
+1. 선호 템플릿 표현 양식: {template_type}
 2. 노트 규격: {note_size}
-3. 수업 주제 및 구조 요구사항:
+3. 학습할 수업 내용:
 {class_notes}
 
-[필수 CSS 및 페이지 레이아웃 지시사항]
-- 선택된 노트 규격({note_size})의 실제 물리적 크기/비율에 정확히 맞추어 스타일링하세요.
+[템플릿 제작 핵심 규칙 (필수 준수)]
+1. **완성된 정답 요약본을 작성하지 마세요.**
+2. 입력된 학습 내용의 **구조적 특성**을 분석하여 맞춤형 서식을 만드세요:
+   - **비교/대조 개념인 경우**: 비교 기준(개념, 특징, 장단점 등)이 들어간 '비교 표(Table)' 형태로 틀을 만들고, 내부 셀은 작성할 수 있도록 비워두거나 힌트/빈칸 `[       ]`을 배치하세요.
+   - **분류/위계 체계인 경우 (예: 3역 6계 등)**: 마인드맵 스타일의 계통도, 트리 구조 Box, 혹은 단계별 분류 표로 틀을 만드세요.
+   - **과정/순서인 경우**: Flowchart 형태의 연결된 박스를 배치하세요.
+3. 학습자가 직접 손필기하거나 타이핑하며 채워갈 수 있도록 **충분한 작성 공간(빈 셀, 빈 상자, 밑줄, 점선)**을 마련하세요.
+
+[페이지 레이아웃 및 CSS 규칙]
+- 선택된 규격({note_size})에 완벽히 맞추어 디자인하세요:
   * A4: width: 210mm; min-height: 297mm;
   * B5: width: 176mm; min-height: 250mm;
   * Letter: width: 215.9mm; min-height: 279.4mm;
   * iPad: width: 100%; aspect-ratio: 16/9; max-width: 1024px;
-- **페이지 장 단위 구성 규칙**:
-  1. 전체 노트를 여러 장으로 구성할 수 있도록 **각 페이지는 반드시 `<div class="page">...</div>` 태그로 개별 작성**해야 합니다.
-  2. 요구사항 양이 많아 2장 이상이 필요한 경우, 반드시 `<div class="page">`를 여러 개 작성하여 장 단위로 나누어지게 만드세요.
-  3. CSS에 아래 페이지 스펙을 반드시 적용하세요:
-     ```css
-     body {{
-         background-color: #f0f0f0;
-         display: flex;
-         flex-direction: column;
-         align-items: center;
-         gap: 20px;
-         padding: 20px;
-         margin: 0;
-     }}
-     .page {{
-         background: white;
-         box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-         box-sizing: border-box;
-         padding: 20mm;
-         break-after: page;
-         page-break-after: always;
-     }}
-     ```
-- **완전 공백 양식 준수**: 본문에는 작성된 해설, 요약 텍스트, 빈칸 문제(`_____`)를 넣지 말고, 직접 손필기할 수 있는 공백, 상자, 줄글 라인, 표 틀만 디자인하세요.
-
-[응답 형식]
-반드시 유효한 JSON 형식으로만 응답하세요. 마크다운 코드 블록(```json 등)이나 기타 텍스트는 절대 포함하지 마세요.
-
-{{
-  "html_code": "<!DOCTYPE html><html><head><style>...</style></head><body>...</body></html>"
-}}
-"""
-
-                    # Upstage Solar API 호출
-                    response = client.chat.completions.create(
-                        model="solar-pro",
-                        messages=[
-                            {
-                                "role": "system",
-                                "content": "You are a professional printable HTML/CSS notebook layout designer. Always respond with valid JSON containing only the 'html_code' field."
-                            },
-                            {
-                                "role": "user",
-                                "content": prompt
-                            }
-                        ],
-                        temperature=0.2
-                    )
-
-                    # JSON 파싱 및 예외 처리
-                    raw_response = response.choices[0].message.content.strip()
-                    if raw_response.startswith("```json"):
-                        raw_response = raw_response[7:]
-                    if raw_response.startswith("```"):
-                        raw_response = raw_response[3:]
-                    if raw_response.endswith("```"):
-                        raw_response = raw_response[:-3]
-
-                    data = json.loads(raw_response.strip())
-                    html_code = data.get("html_code", "")
-
-                    # 1. 시각적 미리보기 (장 단위로 구분되어 렌더링됨)
-                    components.html(html_code, height=800, scrolling=True)
-
-                    # 2. 다운로드 버튼
-                    st.download_button(
-                        label="💾 HTML 노트 템플릿 다운로드",
-                        data=html_code,
-                        file_name="note_template.html",
-                        mime="text/html",
-                        use_container_width=True
-                    )
-
-                except Exception as e:
-                    st.error(f"오류가 발생했습니다: {e}")
+- 내용이 길어 2장 이상 필요 시, 반드시 개별 `<div class="page">...</div>` 태그로 구분하세요.
+- CSS 스타일 적용 예시:
+  ```css
+  body {{
+      background-color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+      margin: 0;
+      font-family: 'Noto Sans KR', sans-serif;
+  }}
+  .page {{
+      background: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      box-sizing: border-box;
+      padding: 15mm;
+      break-after: page;
+      page-break-after: always;
+  }}
+  table {{
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+  }}
+  th, td {{
+      border: 1px solid #cbd5e1;
+      padding: 12px;
+      text-align: center;
+  }}
+  th {{
+      background-color: #f1f5f9;
+      font-weight: bold;
+  }}
+  .diagram-box {{
+      border: 2px dashed #94a3b8;
+      border-radius: 8px;
+      padding: 15px;
+      background-color: #fafafa;
+  }}
