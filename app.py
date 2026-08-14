@@ -66,7 +66,7 @@ st.markdown("""
     <div class="hero-title">✨ AI 맞춤형 100% 무지 학습 템플릿 생성기</div>
     <div class="hero-subtitle">
         개념 설명이나 힌트를 모두 배제하고 <b>오직 사용자가 직접 채워 넣을 수 있는 100% 공백 필기 틀</b>을 만듭니다.<br>
-        표 문법 자동 검증 및 A4 장 단위 자동 분할 기능이 기본 적용되어 있습니다.
+        AI가 내용 구조를 자동 분석하여 최적의 레이아웃을 구성하며, 장 단위 분할 기능이 기본 적용되어 있습니다.
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -79,30 +79,23 @@ col_config, col_view = st.columns([1, 1.3], gap="large")
 with col_config:
     st.subheader("⚙️ 서식 설정")
     
-    template_type = st.selectbox(
-        "📌 템플릿 구조 유형",
-        [
-            "🤖 AI 자동 구조화 (주제에 맞는 최적 서식)",
-            "📊 무지 비교 표 (개념/이론/관점 비교용)",
-            "🌳 무지 위계/분류 상자 (계통도 및 분류용)",
-            "🔄 무지 흐름도 (단계/순서/인과관계용)",
-            "📌 무지 코넬 서식 (섹션 구분 + 요약란)"
-        ]
-    )
+    # 템플릿 구조 고정 (내부 변수 처리)
+    template_type = "🤖 AI 자동 구조화 (학습 주제의 특성에 맞춰 최적의 무지 표/상자/디자인 자동 분할)"
     
+    # 노트 용지 규격 (Letter 삭제, A5 추가)
     note_size = st.selectbox(
         "📐 노트 용지 규격",
         [
             "A4 (210mm x 297mm)",
+            "A5 (148mm x 210mm)",
             "B5 (176mm x 250mm)",
-            "Letter (215.9mm x 279.4mm)",
             "iPad Screen (16:9)"
         ]
     )
     
     class_notes = st.text_area(
         "✍️ 학습 주제 및 구성 요구사항",
-        height=300,
+        height=320,
         placeholder="예시:\n인공지능, 머신러닝, 딥러닝 개념 정리 표와 머신러닝 학습 유형(지도/비지도/강화학습) 비교 표를 만들어주고, 과적합 해결 방안과 K-Means 단계별 정리 상자 틀을 만들어줘."
     )
     
@@ -117,7 +110,7 @@ with col_view:
         elif UPSTAGE_API_KEY == "YOUR_UPSTAGE_API_KEY_HERE":
             st.error("⚠️ 코드 상단의 UPSTAGE_API_KEY 변수에 실제 API 키를 입력해 주세요.")
         else:
-            with st.spinner("개념 설명을 모두 지우고 순수 필기용 공백 틀을 제작 중입니다..."):
+            with st.spinner("AI가 구조를 자동 분석하여 순수 필기용 공백 틀을 제작 중입니다..."):
                 try:
                     # 퓨샷(Few-Shot) 예시를 통한 100% 공백 셀 보장 프롬프트
                     prompt_template = """
@@ -147,7 +140,7 @@ with col_view:
 
 [HTML 표 문법 및 페이지 분할 규칙]
 1. 모든 표(table)의 <th> 개수와 각 <tr> 안의 <td> 개수는 완벽히 일치해야 합니다.
-2. 한 개 페이지(<div class="page">)에 너무 많은 요소가 들어가 인쇄 시 잘리지 않도록 적절히 2~3개의 <div class="page">로 분할하세요.
+2. 선택된 노트 규격({note_size})의 높이를 초과하지 않도록 2~3개의 <div class="page">로 적절히 분할하세요.
 
 [HTML5/JS 템플릿 구조]
 <!DOCTYPE html>
