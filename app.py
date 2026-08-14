@@ -130,7 +130,7 @@ with col_view:
         elif UPSTAGE_API_KEY == "YOUR_UPSTAGE_API_KEY_HERE":
             st.error("⚠️ 코드 상단의 UPSTAGE_API_KEY 변수에 실제 API 키를 입력해 주세요.")
         else:
-            with st.spinner("규격별 엄격한 페이지 분할 및 빈 셀 검증을 진행 중입니다..."):
+            with st.spinner("템플릿을 생성중입니다..."):
                 try:
                     selected_size_info = SIZE_MAP[note_size]
                     page_w = selected_size_info["width"]
