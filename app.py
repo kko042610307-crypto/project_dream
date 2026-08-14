@@ -8,7 +8,7 @@ import textwrap
 # ==============================================================================
 # 1. API 키 설정 (코드 내부 입력)
 # ==============================================================================
-UPSTAGE_API_KEY = "YOUR_UPSTAGE_API_KEY"  # <--- 여기에 업스테이지 API 키를 입력하세요.
+UPSTAGE_API_KEY = "up_Y7OKHBUB2q7pi7C4E1ILIWItBAUOG"  # <--- 여기에 업스테이지 API 키를 입력하세요.
 
 # Upstage Solar Client 초기화
 client = OpenAI(
